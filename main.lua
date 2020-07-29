@@ -11,7 +11,9 @@ WINDOW_HEIGHT = 720
 VIRTUAL_WIDTH = 432
 VIRTUAL_HEIGHT = 243
 
+require 'Util'
 require 'Map'
+
 
 function love.load()
     map = Map()
