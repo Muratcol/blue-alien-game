@@ -9,12 +9,12 @@ function Map:init()
     self.tileWidth = 16
     self.tileHeight = 16
     self.mapWidth = 30
-    self.mapHeight = 20
+    self.mapHeight = 28
     self.tiles = {}
 
     self.tileSprites = generateQuads(self.spritesheet, self.tileWidth, self.tileHeight)
     -- for loops first arg start, second arg end point and third arg is iteration. default + 1
-    for y = 1, self.mapHeight / 2 do
+    for y = 1, self.mapHeight do
         for x = 1,  self.mapWidth do
             self:setTile(x, y, TILE_EMPTY)
         end
@@ -45,6 +45,7 @@ end
 function Map:render()
     for y = 1, self.mapHeight do 
         for x = 1, self.mapWidth do
+            -- love.graphics.draw(texture, quad, x, y)
             love.graphics.draw(self.spritesheet, self.tileSprites[self:getTile(x, y)],
                 (x - 1) * self.tileWidth, (y - 1) * self.tileHeight)
         end
