@@ -14,6 +14,7 @@ function Player:init(map)
     self.frames = generateQuads(self.texture, 16, 20)
 
     self.state = 'idle'
+    self.direction = 'right'
 
     self.animations = {
         ['idle'] = Animation {
@@ -39,9 +40,11 @@ function Player:init(map)
             if love.keyboard.isDown('a') then
                 self.x = self.x - MOVE_SPEED * dt
                 self.animation = self.animations['walking']
+                self.direction = 'left'
             elseif love.keyboard.isDown('d') then          
                 self.x = self.x + MOVE_SPEED * dt
                 self.animation = self.animations['walking']
+                self.direction = 'right'
             else
                 self.animation = self.animations['idle']
             end
@@ -51,9 +54,11 @@ function Player:init(map)
             if love.keyboard.isDown('a') then
                 self.x = self.x - MOVE_SPEED * dt
                 self.animation = self.animations['walking']
+                self.direction = 'left'
             elseif love.keyboard.isDown('d') then
                 self.x = self.x + MOVE_SPEED * dt
                 self.animation = self.animations['walking']
+                self.direction = 'right'
             else
                 self.animation = self.animations['idle']
             end
@@ -70,5 +75,18 @@ function Player:update(dt)
 end
 
 function Player:render()
-    love.graphics.draw(self.texture, self.animation:getCurrentFrame(), math.floor(self.x), math.floor(self.y))
+
+    local scaleX
+
+    if self.direction == 'right' then
+        scaleX = 1
+    elseif self.direction == 'left' then
+        scaleX = -1
+    end
+
+
+    love.graphics.draw(self.texture, self.animation:getCurrentFrame(),
+     math.floor(self.x + self.width / 2), math.floor(self.y + self.height / 2),
+    0, scaleX, 1,
+    self.width / 2, self.height / 2)
 end
