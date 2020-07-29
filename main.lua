@@ -20,7 +20,7 @@ function love.load()
     math.randomseed(os.time())
 
     map = Map()
-    
+
     love.graphics.setDefaultFilter('nearest', 'nearest')
     push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
         fullscreen = false,
@@ -38,7 +38,7 @@ function love.draw()
     push:apply('start')
     love.graphics.translate(math.floor( -map.camX + 0.5), math.floor(-map.camY + 0.5))
     love.graphics.clear(108/255, 140/255, 255/255, 255/255)
-    love.graphics.print('Hello World')
+    -- love.graphics.print('Hello World')
     map:render()
     push:apply('end')
 end

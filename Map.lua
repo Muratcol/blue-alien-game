@@ -1,5 +1,6 @@
 
 require 'Util'
+require 'Player'
 
 Map = Class{}
 
@@ -26,6 +27,8 @@ function Map:init()
     self.mapWidth = 30
     self.mapHeight = 28
     self.tiles = {}
+    -- Player(self) means send,ng map object to Player:init(map)
+    self.player = Player(self)
 
     -- Camera offsets
     self.camX  = 0
@@ -129,26 +132,11 @@ end
 
 
 function Map:update(dt)
-    if love.keyboard.isDown('w') then
-        -- Up movement
-        self.camY = math.max(0, math.floor(self.camY + -SCROLL_SPEED * dt))
-    end
+    self.camX = math.max(0, 
+        math.min(self.player.x - VIRTUAL_WIDTH / 2,
+            math.min(self.mapWidthPixels - VIRTUAL_WIDTH, self.player.x)))
 
-    if love.keyboard.isDown('s') then
-        -- Down movement
-        self.camY = math.min(self.mapHeightPixels - VIRTUAL_HEIGHT, math.floor(self.camY + SCROLL_SPEED * dt))
-    end
-
-    if love.keyboard.isDown('d') then
-        -- Right movement
-        self.camX = math.min(self.mapWidthPixels - VIRTUAL_WIDTH, math.floor(self.camX + SCROLL_SPEED * dt)) 
-    end
-
-    if love.keyboard.isDown('a') then
-        -- Left movement
-        self.camX = math.max(0, math.floor(self.camX + -SCROLL_SPEED * dt))
-    end
-    -- self.camX = self.camX + SCROLL_SPEED * dt
+    self.player:update(dt)
 end
 
 function Map:render()
@@ -159,4 +147,6 @@ function Map:render()
                 (x - 1) * self.tileWidth, (y - 1) * self.tileHeight)
         end
     end
+
+    self.player:render()
 end
