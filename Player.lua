@@ -1,7 +1,8 @@
 Player = Class{}
 
 require 'Animation'
-local MOVE_SPEED = 80
+
+local MOVE_SPEED = 140
 local JUMP_VELOCITY = 500
 local GRAVITY = 40
 
@@ -14,6 +15,8 @@ function Player:init(map)
 
     self.dx = 0
     self.dy = 0
+
+    self.map = map
 
     self.texture = love.graphics.newImage('graphics/blue_alien.png')
     self.frames = generateQuads(self.texture, 16, 20)
@@ -113,6 +116,25 @@ function Player:update(dt)
     self.x = self.x + self.dx * dt
     self.y = self.y + self.dy * dt
     
+    -- if we have negative y velocity (jumping), check if we collide
+    -- with any blocks above us
+    if self.dy < 0 then
+        if self.map:tileAt(self.x, self.y) ~= TILE_EMPTY or
+        self.map:tileAt(self.x + self.width - 1, self.y) ~= TILE_EMPTY then
+        -- reset y velocity
+            self.dy = 0
+
+            -- change block to different block
+            if self.map:tileAt(self.x, self.y) == JUMP_BLOCK then
+                self.map:setTile(math.floor(self.x / self.map.tileWidth) + 1,
+                    math.floor(self.y / self.map.tileHeight) + 1, JUMP_BLOCK_HIT)
+            end
+            if self.map:tileAt(self.x + self.width - 1, self.y) == JUMP_BLOCK then
+                self.map:setTile(math.floor(self.x + self.width - 1 / self.map.tileWidth) + 1,
+                    math.floor(self.y / self.map.tileHeight) + 1, JUMP_BLOCK_HIT)
+            end
+        end
+    end
 end
 
 function Player:render()
