@@ -1,6 +1,7 @@
 
 require 'Util'
 require 'Player'
+require 'Flag'
 
 Map = Class{}
 
@@ -18,6 +19,12 @@ MUSHROOM_BOTTOM = 11
 
 JUMP_BLOCK = 5
 JUMP_BLOCK_HIT = 9
+
+POLE_TOP = 8
+POLE_MID = 12
+POLE_BOTTOM = 16
+
+FLAG = 13
 local SCROLL_SPEED = 62
 
 function Map:init()
@@ -30,6 +37,7 @@ function Map:init()
     self.tiles = {}
     -- Player(self) means send,ng map object to Player:init(map)
     self.player = Player(self)
+    self.flag = Flag(self)
 
     -- Camera offsets
     self.camX  = 0
@@ -123,37 +131,35 @@ function Map:init()
     end
     -- Pyramid
     -- self.mapHeight / 2 - 2
-    local b = 0
-    for j = self.mapWidth / 2, self.mapWidth / 2 + 11 do
-        b = b + 1
+    for m = self.mapWidth / 2, self.mapWidth do
         for i = -self.mapHeight, self.mapHeight / 2 -1 do
             -- support for multiple sheets per tile; storing tiles as tables 
-            self:setTile(j, i, TILE_EMPTY)   
-            
-            for k = self.mapHeight / 2 - b, self.mapHeight / 2 do
-                self:setTile(j, k, JUMP_BLOCK)
-            end
-            for y = self.mapHeight / 2, self.mapHeight do
-                self:setTile(j, y, TILE_BRICK)
-            end   
-   
+            self:setTile(m, i, TILE_EMPTY)   
+        end   
+        for y = self.mapHeight / 2, self.mapHeight do
+            self:setTile(m, y, TILE_BRICK)
+        end   
+    end
+    local b = 0
+    for j = self.mapWidth / 2, self.mapWidth / 2 + 10 do
+        b = b + 1     
+        for k = self.mapHeight / 2 - b, self.mapHeight / 2 - 1 do
+            self:setTile(j, k, JUMP_BLOCK)
         end
     end
-    -- Fill bottom of pyramid
-    -- for j = self.mapWidth / 2, self.mapWidth do
-    --     for k = self.mapHeight / 2 -j - 1, self.mapHeight , -1 do 
-    --         self:setTile(j, k, TILE_EMPTY)
-    --     end
-    --     self:setTile(j, self.mapHeight / 2 -j - 1, JUMP_BLOCK)
-    --     for y = self.mapHeight / 2, self.mapHeight do
-    --         self:setTile(j, y, TILE_BRICK)
-    --     end   
-    -- end
+
+    self:setTile(self.mapWidth / 2 + 15, self.mapHeight / 2 - 1, POLE_BOTTOM)
+    for i = 1, 6 do
+        self:setTile(self.mapWidth / 2 + 15, self.mapHeight / 2 - 1 - i, POLE_MID)
+    end
+    self:setTile(self.mapWidth / 2 + 15, self.mapHeight / 2 - 8, POLE_TOP)
+    -- self:setTile(self.mapWidth / 2 + 16, self.mapHeight / 2 - 8, FLAG)
+    
 
     -- start background music
     self.music:setLooping(true)
     self.music:setVolume(0.25)
-    self.music:play()
+    -- self.music:play()
 end
 
 
@@ -201,6 +207,7 @@ function Map:update(dt)
             math.min(self.mapWidthPixels - VIRTUAL_WIDTH, self.player.x)))
 
     self.player:update(dt)
+    self.flag:update(dt)
 end
 
 function Map:render()
@@ -213,4 +220,5 @@ function Map:render()
     end
 
     self.player:render()
+    self.flag:render()
 end
