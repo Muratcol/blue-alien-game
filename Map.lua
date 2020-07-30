@@ -124,13 +124,13 @@ function Map:init()
     -- Pyramid
     -- self.mapHeight / 2 - 2
     local b = 0
-    for j = self.mapWidth / 2, self.mapWidth do
+    for j = self.mapWidth / 2, self.mapWidth / 2 + 11 do
         b = b + 1
         for i = -self.mapHeight, self.mapHeight / 2 -1 do
             -- support for multiple sheets per tile; storing tiles as tables 
             self:setTile(j, i, TILE_EMPTY)   
-
-            for k = self.mapHeight / 2 - 1 - b, self.mapHeight / 2 do
+            
+            for k = self.mapHeight / 2 - b, self.mapHeight / 2 do
                 self:setTile(j, k, JUMP_BLOCK)
             end
             for y = self.mapHeight / 2, self.mapHeight do
