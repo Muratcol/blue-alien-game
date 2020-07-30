@@ -25,7 +25,7 @@ function Map:init()
     self.music = love.audio.newSource('sounds/music.wav', 'static')
     self.tileWidth = 16
     self.tileHeight = 16
-    self.mapWidth = 30
+    self.mapWidth = 90
     self.mapHeight = 28
     self.tiles = {}
     -- Player(self) means send,ng map object to Player:init(map)
@@ -40,6 +40,10 @@ function Map:init()
     self.mapWidthPixels = self.mapWidth * self.tileWidth
     self.mapHeightPixels = self.mapHeight * self.tileHeight
 
+    
+
+
+
     -- for loops first arg start, second arg end point and third arg is iteration. default + 1
  -- first, fill map with empty tiles
     for y = 1, self.mapHeight do
@@ -50,6 +54,7 @@ function Map:init()
         end
     end
 
+   
     -- Begin generating the terrain using vertical scan lines
     local x = 1
     while x < self.mapWidth do
@@ -114,8 +119,36 @@ function Map:init()
         else
             -- increment X so we skip two scan lines, creating a 2-tile gap
             x = x + 2
+        end    
+    end
+    -- Pyramid
+    -- self.mapHeight / 2 - 2
+    local b = 0
+    for j = self.mapWidth / 2, self.mapWidth do
+        b = b + 1
+        for i = -self.mapHeight, self.mapHeight / 2 -1 do
+            -- support for multiple sheets per tile; storing tiles as tables 
+            self:setTile(j, i, TILE_EMPTY)   
+
+            for k = self.mapHeight / 2 - 1 - b, self.mapHeight / 2 do
+                self:setTile(j, k, JUMP_BLOCK)
+            end
+            for y = self.mapHeight / 2, self.mapHeight do
+                self:setTile(j, y, TILE_BRICK)
+            end   
+   
         end
     end
+    -- Fill bottom of pyramid
+    -- for j = self.mapWidth / 2, self.mapWidth do
+    --     for k = self.mapHeight / 2 -j - 1, self.mapHeight , -1 do 
+    --         self:setTile(j, k, TILE_EMPTY)
+    --     end
+    --     self:setTile(j, self.mapHeight / 2 -j - 1, JUMP_BLOCK)
+    --     for y = self.mapHeight / 2, self.mapHeight do
+    --         self:setTile(j, y, TILE_BRICK)
+    --     end   
+    -- end
 
     -- start background music
     self.music:setLooping(true)
@@ -140,6 +173,7 @@ function Map:tileAt(x, y)
         y = math.floor(y / self.tileHeight) + 1,
         id = self:getTile(math.floor(x / self.tileWidth) + 1, math.floor(y / self.tileHeight) + 1)
     }
+    
 end
 
 -- Return whether a given tile is collidable
