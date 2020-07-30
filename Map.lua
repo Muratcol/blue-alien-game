@@ -200,6 +200,22 @@ function Map:collides(tile)
     return false
 end
 
+function Map:flagCollide(tile)
+
+    local flag_tiles = {
+        FLAG, POLE_BOTTOM, POLE_MID,
+        POLE_TOP
+    }
+
+    for _, v in ipairs(flag_tiles) do
+        if tile.id == v then
+            return true
+            
+        end
+    end
+    return false
+
+end
 
 function Map:update(dt)
     self.camX = math.max(0, 

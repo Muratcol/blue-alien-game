@@ -5,6 +5,7 @@ require 'Animation'
 local WALKING_SPEED = 140
 local JUMP_VELOCITY = 400
 local GRAVITY = 40
+local gameOver = false
 
 function Player:init(map)
     self.width = 16
@@ -106,6 +107,7 @@ function Player:init(map)
             -- check for collisions moving left and right
             self:checkRightCollision()
             self:checkLeftCollision()
+            self:isReachedFlag()
 
             -- check if there's a tile directly beneath us
             if not self.map:collides(self.map:tileAt(self.x, self.y + self.height)) and
@@ -149,6 +151,7 @@ function Player:init(map)
             -- check for collisions moving left and right
             self:checkRightCollision()
             self:checkLeftCollision()
+            self:isReachedFlag()
         end
     }
 end
@@ -181,11 +184,23 @@ function Player:checkRightCollision()
     end
 end
 
+function Player:isReachedFlag()
+    love.graphics.setFont(smallFont)
+    if self.map:flagCollide(self.map:tileAt(self.x + self.width, self.y)) or
+        self.map:flagCollide(self.map:tileAt(self.x + self.width, self.y + self.height - 1)) then
+
+            gameOver = true
+            self.x = map.tileWidth * 10
+            self.y = map.tileHeight * (map.mapHeight / 2 - 1) - self.height
+            
+    end
+end
+
 function Player:update(dt)
     self.behaviors[self.state](dt)
     self.animation:update(dt)
     self.x = self.x + self.dx * dt
-
+    
     self:calculateJumps()
 
     -- apply velocity
@@ -233,7 +248,7 @@ function Player:calculateJumps()
 end
 
 function Player:render()
-
+    love.graphics.setFont(smallFont)
     local scaleX
 
     if self.direction == 'right' then
@@ -242,6 +257,11 @@ function Player:render()
         scaleX = -1
     end
 
+    if gameOver then
+        love.graphics.printf('You Won !', 0, 20, VIRTUAL_WIDTH, 'center')
+    else
+        love.graphics.printf('', 0, 20, VIRTUAL_WIDTH, 'center')
+    end
 
     love.graphics.draw(self.texture, self.animation:getCurrentFrame(),
      math.floor(self.x + self.width / 2), math.floor(self.y + self.height / 2),

@@ -36,11 +36,9 @@ function Flag:update(dt)
 end
 
 function Flag:render()
-    -- love.graphics.draw(self.texture, self.animation:getCurrentFrame(),
-    -- math.floor(map.mapWidth / 2 + 16), math.floor(map.mapHeight / 2 - 8),
-    -- math.floor(self.x + self.width / 2), math.floor(self.y + self.height / 2),
 
     love.graphics.draw(self.texture, self.animation:getCurrentFrame(),
     math.floor(self.x + self.width / 2), math.floor(self.y + self.height / 2),
     0, 1, 1)
+    
 end

@@ -22,6 +22,8 @@ function love.load()
 
     map = Map()
 
+    smallFont = love.graphics.newFont('Daydream.ttf', 8)
+    love.window.setTitle("Murat's Blue Alien Game")
     love.graphics.setDefaultFilter('nearest', 'nearest')
     push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
         fullscreen = false,
