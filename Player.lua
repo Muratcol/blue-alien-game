@@ -3,7 +3,7 @@ Player = Class{}
 require 'Animation'
 
 local WALKING_SPEED = 140
-local JUMP_VELOCITY = 600
+local JUMP_VELOCITY = 400
 local GRAVITY = 40
 
 function Player:init(map)
@@ -171,29 +171,36 @@ function Player:checkRightCollision()
 end
 
 function Player:update(dt)
-
     self.behaviors[self.state](dt)
     self.animation:update(dt)
     self.x = self.x + self.dx * dt
+
+    self:calculateJumps()
+
+    -- apply velocity
     self.y = self.y + self.dy * dt
+end
+
+function Player:calculateJumps()
     
     -- if we have negative y velocity (jumping), check if we collide
     -- with any blocks above us
     if self.dy < 0 then
-        if self.map:tileAt(self.x, self.y) ~= TILE_EMPTY or
-        self.map:tileAt(self.x + self.width - 1, self.y) ~= TILE_EMPTY then
-        -- reset y velocity
+        if self.map:tileAt(self.x, self.y).id ~= TILE_EMPTY or
+            self.map:tileAt(self.x + self.width - 1, self.y).id ~= TILE_EMPTY then
+            -- reset y velocity
             self.dy = 0
 
             -- change block to different block
-            if self.map:tileAt(self.x, self.y) == JUMP_BLOCK then
+            if self.map:tileAt(self.x, self.y).id == JUMP_BLOCK then
                 self.map:setTile(math.floor(self.x / self.map.tileWidth) + 1,
                     math.floor(self.y / self.map.tileHeight) + 1, JUMP_BLOCK_HIT)
             end
-            if self.map:tileAt(self.x + self.width - 1, self.y) == JUMP_BLOCK then
-                self.map:setTile(math.floor(self.x + self.width - 1 / self.map.tileWidth) + 1,
+            if self.map:tileAt(self.x + self.width - 1, self.y).id == JUMP_BLOCK then
+                self.map:setTile(math.floor((self.x + self.width - 1) / self.map.tileWidth) + 1,
                     math.floor(self.y / self.map.tileHeight) + 1, JUMP_BLOCK_HIT)
             end
+
         end
     end
 end

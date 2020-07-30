@@ -56,7 +56,7 @@ function Map:init()
         -- 2% change to generate a cloud
         -- make sure we're 2 tiles from edge at least
         if x < self.mapWidth - 2 then
-            if math.random(20) == 1 then
+            if math.random(10) == 1 then
                 -- choose a random vertical sport above where blocks/pipes generate
                 local cloudStart = math.random(self.mapHeight / 2 - 6)
 
