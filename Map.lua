@@ -40,15 +40,12 @@ function Map:init()
     self.mapHeightPixels = self.mapHeight * self.tileHeight
 
     -- for loops first arg start, second arg end point and third arg is iteration. default + 1
+ -- first, fill map with empty tiles
     for y = 1, self.mapHeight do
-        for x = 1,  self.mapWidth do
+        for x = 1, self.mapWidth do
+            
+            -- support for multiple sheets per tile; storing tiles as tables 
             self:setTile(x, y, TILE_EMPTY)
-        end
-    end
-
-    for y = self.mapHeight / 2, self.mapHeight do
-        for x = 1, self.mapWidth do 
-            self:setTile(x, y, TILE_BRICK)
         end
     end
 
@@ -122,17 +119,41 @@ end
 
 
 -- filling the map with empty tiles
-function Map:setTile(x, y, tile)
-    self.tiles[(y - 1) * self.mapWidth + x] = tile
+function Map:setTile(x, y, id)
+    self.tiles[(y - 1) * self.mapWidth + x] = id
 end
 
+-- returns an integer value for the tile at a given x-y coordinate
 function Map:getTile(x, y)
     return self.tiles[(y - 1) * self.mapWidth + x]
 end
 
 function Map:tileAt(x, y)
-    return self:getTile(math.floor(x / self.tileWidth) + 1, math.floor(y / self.tileHeight) + 1)
+    return {
+        x = math.floor(x / self.tileWidth) + 1,
+        y = math.floor(y / self.tileHeight) + 1,
+        id = self:getTile(math.floor(x / self.tileWidth) + 1, math.floor(y / self.tileHeight) + 1)
+    }
 end
+
+-- Return whether a given tile is collidable
+function Map:collides(tile)
+    -- define our collidable tiles
+    local collidables = {
+        TILE_BRICK, JUMP_BLOCK, JUMP_BLOCK_HIT,
+        MUSHROOM_TOP, MUSHROOM_BOTTOM
+    }
+
+    -- iterate and return true if our tile type matches
+    for _, v in ipairs(collidables) do
+        if tile.id == v then
+            return true
+        end
+    end
+
+    return false
+end
+
 
 function Map:update(dt)
     self.camX = math.max(0, 
